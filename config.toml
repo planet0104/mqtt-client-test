@@ -1,0 +1,18 @@
+ip = ""
+port = 1883
+# 线程数
+thread = 100
+# 每个线程连接数
+conn_per_thread = 100
+# mqtt用户名/主题
+user_name_prefix = "testB"
+# 超时秒数
+connection_timeout = 300
+# 发送消息间隔(秒)
+send_message_delay = 10
+# 重连时间间隔(秒)
+reconnect_delay = 10
+# ping时间(秒)
+keep_alive = 30
+# 打印日志方式 1: 控制台 2: app.log
+log_type = 1
