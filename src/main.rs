@@ -20,6 +20,7 @@ pub struct PeerConfig {
     reconnect_delay: u64,
     keep_alive: u64,
     log_type: u8,
+    reconnect_duration: u64
 }
 
 static mut TOTAL_SUB:Mutex<i32> = Mutex::new(0);

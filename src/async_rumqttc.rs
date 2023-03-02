@@ -1,5 +1,6 @@
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use anyhow::Result;
+use log::info;
 use rumqttc::v5::{MqttOptions, AsyncClient, mqttbytes::QoS, Event};
 
 use crate::{add_total_sub, add_total_msg, add_total_send, PeerConfig};
@@ -23,6 +24,7 @@ pub async fn subscribe(config: PeerConfig, username: &str) -> Result<()> {
 
     // 延迟10分钟再发送消息
     let username1 = username.to_string();
+    let username2 = username1.clone();
     tokio::task::spawn(async move {
         loop{
             tokio::time::sleep(Duration::from_secs(config.send_message_delay)).await;
@@ -33,6 +35,9 @@ pub async fn subscribe(config: PeerConfig, username: &str) -> Result<()> {
             }
         }
     });
+
+    let connect_time = Instant::now();
+    
 
     loop{
         match eventloop.poll().await{
@@ -48,6 +53,11 @@ pub async fn subscribe(config: PeerConfig, username: &str) -> Result<()> {
                 // error!("{username}链接断开:{:?}", err);
                 break;
             }
+        }
+        let alive_minute = connect_time.elapsed().as_secs() / 60;
+        if alive_minute >= config.reconnect_duration{
+            info!("{username2}已上线{alive_minute}分钟，自动断开.");
+            break;
         }
     }
 
